@@ -1,0 +1,4 @@
+assets/*.fla
+backup
+bin-debug
+bin-release
