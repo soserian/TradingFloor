@@ -18,23 +18,19 @@ package bgs.game.control
 	import bgs.game.model.StockTileModel;
 	import bgs.game.view.ChangeTileView;
 	import bgs.game.view.PreparePop;
+	import bgs.game.view.ResultView;
 	import bgs.game.vo.Tile;
 
 	public class GameControl extends EventDispatcher
 	{
 		private var _main:Main;
-//		private var _user:Player;
-//		private var _pc:PC;
 		private var _seqManager:SeqManager;
 		private var _prepareView:PreparePop;
 		private var _stockControl:StockControl;
 		private var _diceControl:DiceControl;
 		private var _gameModel:GameModel;
-		private var _playerControl:PlayerControl;
 		private var _viewControl:ViewControl;
-//		private var _changeStockView:ChangeStockView;
-//		private var _changeDividend:ChangeDividend;
-		
+		private var _resultView:ResultView;
 		
 		//======================================================
 		// constructor
@@ -67,7 +63,6 @@ package bgs.game.control
 		{
 			_setInit();
 			_attachEvent();
-//			_createPlayers();
 			_createSeq();
 			_createControls();
 			_initUI();
@@ -75,10 +70,9 @@ package bgs.game.control
 		
 		private function _createControls():void
 		{
-			// TODO Auto Generated method stub
 			_stockControl = new StockControl(_main);
 			_diceControl = new DiceControl;
-			_playerControl = new PlayerControl;
+			PlayerControl.getInstance().setMain(_main);
 		}
 		
 		private function _initUI():void
@@ -99,6 +93,7 @@ package bgs.game.control
 				_main["marker" + i + "_2"].gotoAndStop(i);;
 			}
 		}
+		
 		private function _startReady():void
 		{
 			_prepareView = new PreparePop(_main.readyPopup);
@@ -112,7 +107,6 @@ package bgs.game.control
 		}
 		private function _startSeq():void
 		{
-//			_gameModel.isFirst = false;
 			_gameModel.round = 1;
 			_gameModel.state = 0;
 			_roundView(_seqManager.start);
@@ -134,12 +128,8 @@ package bgs.game.control
 			_main.roundView.textMc.roundTxt.text = _gameModel.round + "Round Start";
 			_main.addEventListener(Event.ENTER_FRAME, enterFrame);
 		}
-		private function _setInit():void
+		private function _setMcVisible():void
 		{
-			_main.gotoAndStop(2);
-			_main.popupMc.gotoAndStop(1);
-			_main.readyPopup.gotoAndStop(1);
-			
 			_main.mentTxt.visible = false;
 			_main.balloonMc.visible = false;
 			_main.popupMc.visible = false;
@@ -151,16 +141,30 @@ package bgs.game.control
 			_main.nextCard.visible = false;
 			_main.roundView.visible = false;
 			_main.tileAni.visible = false;
-			_main.stockView.gotoAndStop(1);
-			_main.subTitleView.gotoAndStop(1);
-			_main.tileFirstAni.gotoAndStop(1);
-			_main.roundView.gotoAndStop(1);
-			_main.tileAni.gotoAndStop(1);
+			_main.money_text.visible = false;
 			for(var i:uint = 1; i <= 4; i++)
 			{
 				_main["marker" + i + "_1"].visible = false;
 				_main["marker" + i + "_2"].visible = false;
 			}
+		}
+		private function _setInit():void
+		{
+			_main.gotoAndStop(2);
+			
+			_setMcVisible();
+			_main.popupMc.gotoAndStop(1);
+			_main.readyPopup.gotoAndStop(1);
+			_main.money_text.text = "0";
+			_main.stockView.gotoAndStop(1);
+			_main.subTitleView.gotoAndStop(1);
+			_main.tileFirstAni.gotoAndStop(1);
+			_main.roundView.gotoAndStop(1);
+			_main.tileAni.gotoAndStop(1);
+			
+			_main.subTitleView.mouseChildren = false;
+			_main.subTitleView.mouseEnabled = false;
+			_main.subTitleView.enabled = false;
 			
 			_main.mentTxt.wordWrap = true;
 			_main.mentTxt.autoSize = TextFieldAutoSize.CENTER;
@@ -169,6 +173,24 @@ package bgs.game.control
 			_gameModel = GameModel.getInstance();
 		}
 		
+		private function _createSeq():void
+		{
+			_seqManager = new SeqManager(_main);
+			_seqManager.addEventListener(Event.COMPLETE, _nextRound);
+		}
+		
+		private function _attachEvent():void
+		{
+			_main.xBtn.addEventListener(MouseEvent.CLICK, _handleClose);
+		}
+		
+		private function _viewResult():void
+		{
+			_resultView = new ResultView(_main);
+		}
+		//======================================================
+		// event
+		//======================================================
 		private function _generateTiles(e:Event):void
 		{
 			_prepareView.removeEventListener(StockTileEvent.TILE_CHANGE, _generateTiles);
@@ -189,34 +211,13 @@ package bgs.game.control
 			stockTileModel.selIndex = 0;
 			_viewControl.changeTileView.firstChange();
 		}
-		
-//		private function _createPlayers():void
-//		{
-//			_user = Player.getInstance();
-//			_pc = PC.getInstance();
-//			_user.init();
-//			_pc.init();
-//		}
-		
-		private function _createSeq():void
-		{
-			_seqManager = new SeqManager(_main);
-			_seqManager.addEventListener(Event.COMPLETE, _nextRound);
-		}
-		
-		private function _attachEvent():void
-		{
-			_main.xBtn.addEventListener(MouseEvent.CLICK, _handleClose);
-		}
-		//======================================================
-		// event
-		//======================================================
 		private function _nextRound(e:Event):void
 		{
 			_gameModel.isFirst = false;
 			if (_gameModel.round == Game.TOTAL_ROUND){
 				_main.popupMc.visible = true;
 				_main.popupMc.gotoAndStop(Game.RESULT_POPUP_FRAME);
+				_viewResult();
 				return;
 			}
 			_gameModel.round++;
@@ -225,7 +226,6 @@ package bgs.game.control
 			_main.roundTxt.text = _gameModel.round + "Round";
 			
 			_roundView(_seqManager.nextRound);
-//			_seqManager.nextRound();
 		}
 		private function _handleClose(e:MouseEvent):void
 		{

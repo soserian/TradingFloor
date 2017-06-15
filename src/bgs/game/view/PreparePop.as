@@ -9,6 +9,7 @@ package bgs.game.view
 	import flash.events.MouseEvent;
 	import flash.utils.setTimeout;
 	
+	import bgs.game.control.user.PlayerControl;
 	import bgs.game.define.SndDef;
 	import bgs.game.event.StockTileEvent;
 	import bgs.game.util.FrameAnimation;
@@ -108,6 +109,7 @@ package bgs.game.view
 					_cnt = 0;
 					_comCnt = 0;
 					_aniMoney();
+					
 					break;
 				case 4:
 					_main.prepareAni.visible = false;
@@ -143,6 +145,7 @@ package bgs.game.view
 		private function _moneyActive():void
 		{
 			_initAni();
+			PlayerControl.getInstance().initCash();
 			_popup.nextBtn.visible = true;
 			for (var i:uint = 1; i <= 5; i++){
 				_main["money" + i].visible = true;

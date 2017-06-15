@@ -1,6 +1,8 @@
 package bgs.game.model
 {
 	import flash.events.EventDispatcher;
+	
+	import bgs.game.event.UserEvent;
 
 	public class UserModel extends EventDispatcher
 	{
@@ -32,6 +34,7 @@ package bgs.game.model
 		public function set cash($cash:int):void
 		{
 			_cash = $cash;
+			dispatchEvent(new UserEvent(UserEvent.CHANGE_CASH, _cash));
 		}
 		public function get eventCards():Vector.<uint>
 		{

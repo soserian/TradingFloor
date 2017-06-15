@@ -11,6 +11,7 @@ package bgs.game.model
 		private var _cashes:Vector.<uint>;
 		private var _blocks:Array;
 		private var _stockCards:Array;
+		private var _eventCards:Array;
 		static private var _playerModel:PlayerModel;
 		public function PlayerModel()
 		{
@@ -31,14 +32,6 @@ package bgs.game.model
 		{
 			_cashes = $cash;
 		}
-		public function get blocks():Array
-		{
-			return _blocks;
-		}
-		public function set blocks($blocks:Array):void
-		{
-			_blocks = $blocks;
-		}
 		public function get stockCards():Array
 		{
 			return _stockCards;
@@ -46,6 +39,15 @@ package bgs.game.model
 		public function set stockCards($stockCards:Array):void
 		{
 			_stockCards = $stockCards;
+		}
+		
+		public function get eventCards():Array
+		{
+			return _eventCards;
+		}
+		public function set eventCards($eventCards:Array):void
+		{
+			_eventCards = $eventCards;
 		}
 		
 	}

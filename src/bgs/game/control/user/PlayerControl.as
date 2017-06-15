@@ -12,6 +12,7 @@ package bgs.game.control.user
 		private var _user:Player;
 		private var _userTemp:Vector.<uint>;
 		private var _pcTemp:Array;
+		private var _main:Main;
 		
 		public function PlayerControl()
 		{
@@ -20,9 +21,6 @@ package bgs.game.control.user
 			playerModel.stockCards = [new <uint>[2, 2, 2, 2], 
 				new <uint>[2, 2, 2, 2], new <uint>[2, 2, 2, 2]];
 			playerModel.cash = new <uint>[Players.DEFUALT_MONEY,Players.DEFUALT_MONEY,Players.DEFUALT_MONEY];
-			
-			_user = new Player();
-			
 		}
 		
 		static public function getInstance():PlayerControl
@@ -32,6 +30,16 @@ package bgs.game.control.user
 			}
 			
 			return _playerControl;
+		}
+		public function initCash():void
+		{
+			trace(_user);
+			_user.init();
+		}
+		public function setMain(main:Main):void
+		{
+			_main = main;
+			_user = new Player(_main);
 		}
 		/**
 		 * 현재는 PC의 동작을 이 곳에 포함하지만 나중에 PC객체에 빼고 관리하도록 수정한다.
